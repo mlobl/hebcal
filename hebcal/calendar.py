@@ -69,8 +69,7 @@ class Calendar:
         if self.hebrew_month in self.rest_holidays:
             if self.hebrew_day in self.rest_holidays[self.hebrew_month]:
                 return self.rest_holidays[self.hebrew_month][self.hebrew_day]
-        return None
-    
+
     def get_work_holiday(self):
         """Get the work holiday if it exists. Otherwise it returns None
         
@@ -82,10 +81,9 @@ class Calendar:
         if self.hebrew_month in self.work_holiday:
             if self.hebrew_day in self.work_holiday[self.hebrew_month]:
                 return self.work_holiday[self.hebrew_month][self.hebrew_day]
-        return None
-    
-    @classmethod
-    def is_holiday(cls, info):
+
+    @staticmethod
+    def is_holiday(info):
         """Checks if there is a holiday
         
         If there is a rest or work holiday it will return True. Otherwise it 
@@ -98,7 +96,7 @@ class Calendar:
             boolean -- True if its a holiday False if its not a holiday
         """
 
-        holidays = cls(info)
+        holidays = Calendar(info)
 
         if holidays.get_rest_holiday() is not None:
             return True
@@ -108,8 +106,8 @@ class Calendar:
 
         return False
 
-    @classmethod
-    def is_rest_holiday(cls, info):
+    @staticmethod
+    def is_rest_holiday(info):
         """Returns True if its a rest holiday
         
         Checks if its a rest holiday. By default its calculated from sunset to
@@ -123,7 +121,7 @@ class Calendar:
             bool -- True if its a rest holiday False if it's not.
         """
 
-        holiday = cls(info)
+        holiday = Calendar(info)
 
         if holiday.get_rest_holiday() is not None:
             return True
@@ -157,7 +155,7 @@ class Calendar:
         if info.date_time.weekday() == 5:
 
             # Use the alternate nighttime to allow for adjustments for halachic
-            #   nighttime (e.g. Use Rabinu Tam zman, whcich is 72 minutes after
+            #   nighttime (e.g. Use Rabinu Tam zman, which is 72 minutes after
             #   sunset)
             night = info.alternate_nighttime
             if info.date_time < night:
@@ -165,14 +163,7 @@ class Calendar:
 
         return False
 
-    @classmethod
-    def is_today_rest_day(cls, info):
-        holidays = cls(info)
-
-        if holidays.get_rest_holiday() is not None:
-            return True
-
-        if self.is_shabbos(info):
-            return True
-
-        return False
+    @staticmethod
+    def is_rest_day(info):
+        holidays = Calendar(info)
+        return any([holidays.get_rest_holiday(), Calendar.is_shabbos(info)])
